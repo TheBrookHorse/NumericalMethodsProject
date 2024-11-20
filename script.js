@@ -1,54 +1,66 @@
-// Get the simulation container
-const container = document.getElementById('simulation-container');
+document.addEventListener('DOMContentLoaded', () => {
+    const container = document.getElementById('simulation-container');
+    if (!container) {
+        console.error('Simulation container not found!');
+        return;
+    }
 
-// Create a canvas element for the stars
-const canvas = document.createElement('canvas');
-canvas.width = container.offsetWidth;
-canvas.height = container.offsetHeight;
-container.appendChild(canvas);
-
-const ctx = canvas.getContext('2d');
-
-// Adjust canvas size dynamically on window resize
-window.addEventListener('resize', () => {
+    // Create canvas
+    const canvas = document.createElement('canvas');
     canvas.width = container.offsetWidth;
     canvas.height = container.offsetHeight;
-});
+    container.appendChild(canvas);
 
-// Starfield settings
-const stars = [];
-const numStars = 100;
+    const ctx = canvas.getContext('2d');
 
-// Initialize stars
-for (let i = 0; i < numStars; i++) {
-    stars.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        size: Math.random() * 2 + 1,
-        speed: Math.random() * 0.5 + 0.2,
+    // Handle window resize
+    window.addEventListener('resize', () => {
+        canvas.width = container.offsetWidth;
+        canvas.height = container.offsetHeight;
+
+        // Reinitialize stars
+        initializeStars();
     });
-}
 
-// Draw stars
-function drawStars() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = '#fff';
-    stars.forEach((star) => {
-        ctx.beginPath();
-        ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
-        ctx.fill();
+    // Starfield settings
+    const stars = [];
+    const numStars = 100;
 
-        // Move stars downward
-        star.y += star.speed;
-
-        // Reset star position when it goes out of view
-        if (star.y > canvas.height) {
-            star.y = 0;
-            star.x = Math.random() * canvas.width;
+    // Initialize stars
+    function initializeStars() {
+        stars.length = 0;
+        for (let i = 0; i < numStars; i++) {
+            stars.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                size: Math.random() * 2 + 1,
+                speed: Math.random() * 0.5 + 0.2,
+            });
         }
-    });
-    requestAnimationFrame(drawStars);
-}
+    }
+    initializeStars();
 
-// Start the animation
-drawStars();
+    // Draw stars
+    function drawStars() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = '#fff';
+        stars.forEach((star) => {
+            ctx.beginPath();
+            ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Move stars downward
+            star.y += star.speed;
+
+            // Reset star position
+            if (star.y > canvas.height) {
+                star.y = 0;
+                star.x = Math.random() * canvas.width;
+            }
+        });
+        requestAnimationFrame(drawStars);
+    }
+
+    // Start animation
+    drawStars();
+});
